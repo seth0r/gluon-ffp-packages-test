@@ -87,9 +87,7 @@ xroutes() {
 	echo "</tunnel>"
 	echo "<routes>"
 	ip route show table main | grep default
-	ip route show table ffuplink 2> /dev/null | grep default
-	ip route show table olsr-default | grep default
-	ip route show table olsr-tunnel | grep default
+	ip -6 route show table main | grep default
 	echo "</routes>"
 }
 

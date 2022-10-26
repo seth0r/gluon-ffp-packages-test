@@ -34,7 +34,7 @@ define Package/gluon-ffp-xmlcollect/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/ffp-xmlcollect.sh $(1)/usr/bin/ffp-xmlcollect.sh
 	$(INSTALL_DIR) $(1)/usr/lib/micron.d
-	$(CP) ./files/ffp-collect.cron $(1)/usr/lib/micron.d/ffp-collect
+	$(CP) ./files/ffp-xmlcollect.cron $(1)/usr/lib/micron.d/ffp-xmlcollect
 endef
 
 $(eval $(call BuildPackage,gluon-ffp-xmlcollect))
