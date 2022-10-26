@@ -10,7 +10,7 @@ STOP=11
 
 ## script variables
 SCRIPT=${SCRIPTPATH}${SCRIPTNAME}
-CRONTABPATH='/var/spool/cron/crontabs/' # _with_ trailing / !
+CRONTABPATH='/etc/crontabs/' # _with_ trailing / !
 CRONTABUSER='root'
 CRONTAB=${CRONTABPATH}${CRONTABUSER}
 
