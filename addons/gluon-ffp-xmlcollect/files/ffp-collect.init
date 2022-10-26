@@ -1,41 +1,23 @@
 #!/bin/sh /etc/rc.common
-##### ----- do NOT edit from this line on ----- #####
-## init variables; https://wiki.openwrt.org/doc/techref/initscripts
-SCRIPTNAME='ffp-xmlcollect.sh'
-SCRIPTPATH='/usr/bin/' # _with_ trailing / !
-
-export LC_ALL=C
 START=99
 STOP=11
 
 ## script variables
-SCRIPT=${SCRIPTPATH}${SCRIPTNAME}
-CRONTABPATH='/etc/crontabs/' # _with_ trailing / !
-CRONTABUSER='root'
-CRONTAB=${CRONTABPATH}${CRONTABUSER}
-
-plog() {
-	MSG="$*"
-	echo ${MSG}
-}
+SCRIPT='/usr/bin/ffp-xmlcollect.sh'
+CRONTAB='/usr/lib/micron.d/ffp-collect'
 
 start() {
-	# INFO: enable init script AND add update cron job
-	sed -i "/`echo ${SCRIPTNAME} | sed 's!/!\\\\/!g'`/d" ${CRONTAB}
+	rm -f ${CRONTAB}
 
 	CRONJOB="*/10 * * * * ${SCRIPT} upload # FFP-StatusUpload"
 	echo "${CRONJOB}" >> ${CRONTAB}
 	CRONJOB="* * * * * ${SCRIPT} collect # FFP-StatusCollection"
 	echo "${CRONJOB}" >> ${CRONTAB}
-	sleep 1
-	echo "${CRONTABUSER}" > ${CRONTABPATH}cron.update # reload crontab
-	logger -t "ffp-collect" "cron jobs for user ${CRONTABUSER} added"
+	logger -t "ffp-collect" "cron jobs added"
 }
 
 stop() {
-	sed -i "/`echo ${SCRIPTNAME} | sed 's!/!\\\\/!g'`/d" ${CRONTAB}
-	sleep 1
-	echo "${CRONTABUSER}" > ${CRONTABPATH}cron.update # reload crontab
-	logger -t "ffp-collect" "cron jobs for user ${CRONTABUSER} removed"
+	rm -f ${CRONTAB}
+	logger -t "ffp-collect" "cron jobs removed"
 	${SCRIPT} upload --now
 }
