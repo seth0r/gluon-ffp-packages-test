@@ -30,7 +30,7 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-ffp-ollect/install
+define Package/gluon-ffp-xmlcollect/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/ffp-collect.init $(1)/etc/init.d/ffp-collect
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -47,4 +47,4 @@ define Package/gluon-ffp-xmlcollect/postinst
 #fi
 endef
 
-$(eval $(call BuildPackage,gluon-ffp-collect))
+$(eval $(call BuildPackage,gluon-ffp-xmlcollect))
