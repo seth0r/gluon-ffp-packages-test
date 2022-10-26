@@ -1,4 +1,0 @@
-#!/bin/sh
-/etc/init.d/ffp-collect stop
-/etc/init.d/ffp-collect start
-/etc/init.d/ffp-collect enable

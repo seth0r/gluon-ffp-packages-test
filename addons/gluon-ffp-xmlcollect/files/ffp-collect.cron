@@ -1,0 +1,2 @@
+*/10 * * * * /usr/bin/ffp-xmlcollect.sh upload
+*    * * * * /usr/bin/ffp-xmlcollect.sh collect

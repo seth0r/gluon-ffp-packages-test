@@ -31,20 +31,10 @@ define Build/Compile
 endef
 
 define Package/gluon-ffp-xmlcollect/install
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/ffp-collect.init $(1)/etc/init.d/ffp-collect
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/ffp-xmlcollect.sh $(1)/usr/bin/ffp-xmlcollect.sh
-#	$(INSTALL_DIR) $(1)/etc/uci-defaults
-#	$(CP) ./files/ffp-z95_ffp-collect $(1)/etc/uci-defaults/
-endef
-
-define Package/gluon-ffp-xmlcollect/postinst
-#!/bin/sh
-#if [ -f /lib/functions.sh ] ; then
-#	$${IPKG_INSTROOT}/etc/init.d/ffp-collect start
-#	$${IPKG_INSTROOT}/etc/init.d/ffp-collect enable
-#fi
+	$(INSTALL_DIR) $(1)/usr/lib/micron.d
+	$(CP) ./files/ffp-collect.cron $(1)/usr/lib/micron.d/ffp-collect
 endef
 
 $(eval $(call BuildPackage,gluon-ffp-xmlcollect))
