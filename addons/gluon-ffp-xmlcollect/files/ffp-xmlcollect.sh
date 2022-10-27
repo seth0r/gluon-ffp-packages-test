@@ -20,6 +20,24 @@ EXCLUDE_DEVICES=`echo $EXCLUDE_DEVICES | sed 's/\./_/g'`
 hostname=`uci get system.@system[0].hostname`
 time=`date +%s`
 
+xnodeinfo() {
+	echo "<nodeinfo>"
+	gluon-neighbour-info -d ::1 -p 1001 -r "nodeinfo"
+	echo "</nodeinfo>"
+}
+
+xneighbours() {
+	echo "<neighbours>"
+	gluon-neighbour-info -d ::1 -p 1001 -r "neighbours"
+	echo "</neighbours>"
+}
+
+xstatistics() {
+	echo "<statistics>"
+	gluon-neighbour-info -d ::1 -p 1001 -r "statistics"
+	echo "</statistics>"
+}
+
 xuptime() {
 	echo "<uptime>"
 	uptime
@@ -102,7 +120,7 @@ xinfo() {
 xsystem() {
 	echo "<system>"
 	echo "<os>"
-	cat /etc/os_release
+	cat /etc/os-release
 	echo "</os>"
 	echo "<openwrt>"
 	cat /etc/openwrt_release
@@ -111,6 +129,17 @@ xsystem() {
 	cat /proc/cpuinfo
 	echo "</cpu>"
 	echo "</system>"
+}
+
+xlinks() {
+	echo "<batadv>"
+	echo "<hj>"
+	batctl hj
+	echo "</hj>"
+	echo "<oj>"
+	batctl oj
+	echo "</oj>"
+	echo "</batadv>"
 }
 
 fupload() {
@@ -156,23 +185,26 @@ upload_rm_or_gzip() {
 if [ "$1" = "collect" ]; then
 	m=`date +%M`
 	f=$COLLDIR/$time.cff
-	echo "<ffstat host='$hostname' time='$time' ver='$SCRIPTVERSION'>" > $f
+	echo "<ffgstat host='$hostname' time='$time' ver='$SCRIPTVERSION'>" > $f
 	(
-		xtop
-		xuptime
+		xneighbours
+		xstatistics
+		#xtop
+		#xuptime
 		xconn
-		xroutes
-#		 xlinks
-		if [ $(( $m % 5 )) -eq 0 ]; then
-			xsystem
-			xinfo
-			xdf
-			xbrctl
-			xiwinfo
-			xifconfig
+		#xlinks
+		if [ $(( $m % 10 )) -eq 0 ]; then
+			xnodeinfo
+			xroutes
+			#xsystem
+			#xinfo
+			#xdf
+			#xbrctl
+			#xiwinfo
+			#xifconfig
 		fi
 	) >> $f
-	echo "</ffstat>" >> $f
+	echo "</ffgstat>" >> $f
 	mv $f $f.xml
 	rm -r $COLLDIR/*.cff 2> /dev/null
 elif [ "$1" = "upload" ]; then
