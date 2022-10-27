@@ -55,7 +55,7 @@ xdf() {
 
 xconn() {
 	echo "<conn>"
-	cut -c12-20 /proc/net/nf_conntrack | sort | uniq -c
+	sed 's/  */ /g' /proc/net/nf_conntrack | cut -d' ' -f 1-4 | sort | uniq -c
 	echo "</conn>"
 }
 
@@ -82,39 +82,35 @@ xbrctl() {
 }
 
 xroutes() {
-	echo "<tunnel>"
-	ip tunnel show
-	echo "</tunnel>"
 	echo "<routes>"
-	ip route show table main | grep default
-	ip -6 route show table main | grep default
+	ip route show table main | grep "^default"
+	ip -6 route show table main | grep "^default"
 	echo "</routes>"
 }
 
-xoptions() {
-	echo "<options>"
-	grep 'latitude' /etc/config/system
-	grep 'longitude' /etc/config/system
-	grep 'location' /etc/config/system
-	if [ "$SENDCONTACT" == "1" ]; then
-		grep 'mail' /etc/config/freifunk
-		grep 'note' /etc/config/freifunk
-		grep 'phone' /etc/config/freifunk
+xinfo() {
+	echo "<contact>"
+	uci get gluon-node-info.@owner[0].contact
+	echo "</contact>"
+	if [ "`uci get gluon-node-info.@location[0].share_location`" = "1" ]; then
+		lon="`uci get gluon-node-info.@location[0].longitude`"
+		lat="`uci get gluon-node-info.@location[0].latitude`"
+		echo "<location lon='$lon' lat='$lat' />"
 	fi
-	echo "</options>"
 }
 
 xsystem() {
 	echo "<system>"
-	echo -n "firmware : "
-	cat /etc/openwrt_version
-	grep 'machine' /proc/cpuinfo
-	grep 'system type' /proc/cpuinfo
+	echo "<os>"
+	cat /etc/os_release
+	echo "</os>"
+	echo "<openwrt>"
+	cat /etc/openwrt_release
+	echo "</openwrt>"
+	echo "<cpu>"
+	cat /proc/cpuinfo
+	echo "</cpu>"
 	echo "</system>"
-}
-
-echocrlf() {
-	echo -n "$1"
 }
 
 fupload() {
@@ -166,9 +162,10 @@ if [ "$1" = "collect" ]; then
 		xuptime
 		xconn
 		xroutes
+#		 xlinks
 		if [ $(( $m % 5 )) -eq 0 ]; then
 			xsystem
-			xoptions
+			xinfo
 			xdf
 			xbrctl
 			xiwinfo
