@@ -73,7 +73,7 @@ xdf() {
 
 xconn() {
 	echo "<conn>"
-	sed 's/  */ /g' /proc/net/nf_conntrack | cut -d' ' -f 1-4 | sort | uniq -c
+	sed 's/  */ /g' /proc/net/nf_conntrack | cut -d' ' -f 1-4 | sort | uniq -c | sed 's/^ *//g'
 	echo "</conn>"
 }
 
